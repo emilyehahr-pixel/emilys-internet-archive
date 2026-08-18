@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fanfiction Archive</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- EPUB.JS LIBRARY -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
     <style>
         :root {
@@ -25,8 +24,7 @@
         body {
             font-family: var(--font-main);
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(rgba(192, 132, 252, 0.15), rgba(255,255,255,0) 2px, transparent 2px);
+            background-image: radial-gradient(rgba(192, 132, 252, 0.15), rgba(255,255,255,0) 2px, transparent 2px);
             background-size: 40px 40px;
             color: var(--text-color);
             margin: 0;
@@ -70,162 +68,130 @@
             font-weight: 600;
         }
 
+        /* Controls & Filters Bar */
         .controls-container {
-            max-width: 800px; margin: 40px auto;
-            display: flex; justify-content: center;
+            max-width: 900px; margin: 30px auto;
+            display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;
         }
 
-        input[type="text"] {
-            width: 100%; max-width: 500px;
-            padding: 15px 25px;
+        input[type="text"], select {
+            padding: 12px 20px;
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(192, 132, 252, 0.3);
-            border-radius: 50px;
+            border-radius: 30px;
             color: var(--text-color);
-            font-size: 1.1rem;
+            font-size: 1rem;
             outline: none;
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
         }
 
-        input[type="text"]:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
+        input[type="text"] { flex: 1; min-width: 280px; }
+        select { cursor: pointer; }
+        select option { background: #1a1528; color: var(--text-color); }
 
         .trope-section {
-            margin-bottom: 60px; max-width: 1400px;
+            margin-bottom: 50px; max-width: 1400px;
             margin-left: auto; margin-right: auto;
             padding: 0 20px;
         }
 
-        .trope-title {
-            font-size: 1.6rem; font-weight: 700;
-            color: #e9d5ff;
-            margin-bottom: 25px; padding-left: 20px;
+        .trope-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-left: 20px;
             border-left: 5px solid var(--accent-color);
         }
 
-        .fic-slider {
-            display: flex; gap: 30px; overflow-x: auto;
-            padding: 10px 5px 30px 5px;
-            scroll-behavior: smooth;
+        .trope-title {
+            font-size: 1.5rem; font-weight: 700; color: #e9d5ff; margin: 0;
         }
 
-        .fic-slider::-webkit-scrollbar { height: 10px; }
+        .more-like-this-btn {
+            background: none; border: 1px solid var(--accent-color);
+            color: var(--accent-hover); padding: 5px 15px; border-radius: 20px;
+            cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+        }
+        .more-like-this-btn:hover { background: var(--accent-color); color: #0f0c1b; }
+
+        .fic-slider {
+            display: flex; gap: 25px; overflow-x: auto;
+            padding: 10px 5px 25px 5px; scroll-behavior: smooth;
+        }
+
+        .fic-slider::-webkit-scrollbar { height: 8px; }
         .fic-slider::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
         .fic-slider::-webkit-scrollbar-thumb { background: rgba(192, 132, 252, 0.3); border-radius: 10px; }
 
         .fic-card {
-            flex: 0 0 320px;
+            flex: 0 0 300px;
             background: var(--card-bg);
             border: 1px solid rgba(192, 132, 252, 0.1);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.5);
+            border-radius: 18px; padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
-            display: flex; flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.4s ease;
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: all 0.3s ease; position: relative;
         }
 
         .fic-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             border-color: var(--accent-color);
-            box-shadow: 0 20px 50px var(--accent-glow);
+            box-shadow: 0 15px 40px var(--accent-glow);
         }
 
         .fic-cover {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 15px;
+            width: 100%; height: 150px; object-fit: cover;
+            border-radius: 10px; margin-bottom: 12px;
             border: 1px solid rgba(192, 132, 252, 0.2);
         }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .fic-title { font-size: 1.25rem; font-weight: 700; color: #ffffff; margin: 0 0 5px 0; }
-        .fic-author { font-size: 0.9rem; color: var(--muted-text); font-style: italic; margin-bottom: 10px; }
+        .fic-title { font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 4px 0; }
+        .star-icon { cursor: pointer; color: #6b7280; font-size: 1.2rem; transition: color 0.2s; }
+        .star-icon.starred { color: var(--star-color); text-shadow: 0 0 8px var(--star-color); }
 
+        .fic-author { font-size: 0.85rem; color: var(--muted-text); font-style: italic; margin-bottom: 10px; }
         .fic-summary {
-            font-size: 0.85rem; line-height: 1.5;
-            color: var(--muted-text);
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 0.82rem; line-height: 1.4; color: var(--muted-text);
+            margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical; overflow: hidden;
         }
 
-        .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
         .tag {
-            font-size: 0.7rem;
-            background: rgba(192, 132, 252, 0.1);
-            color: var(--accent-hover);
-            padding: 3px 10px;
-            border-radius: 20px;
+            font-size: 0.68rem; background: rgba(192, 132, 252, 0.1);
+            color: var(--accent-hover); padding: 3px 8px; border-radius: 15px;
             border: 1px solid rgba(192, 132, 252, 0.2);
         }
 
         .fic-stats {
-            font-size: 0.8rem; color: #9ca3af;
-            display: flex; justify-content: space-between;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 12px; margin-bottom: 15px;
+            font-size: 0.78rem; color: #9ca3af; display: flex; justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 10px; margin-bottom: 12px;
         }
 
-        .button-row { display: flex; gap: 10px; }
-
+        .button-row { display: flex; gap: 8px; }
         .action-btn {
-            flex: 1; border: none; padding: 10px;
-            border-radius: 8px; font-weight: 600;
-            font-size: 0.8rem; cursor: pointer;
-            text-align: center; text-decoration: none;
-            transition: all 0.2s ease;
+            flex: 1; border: none; padding: 8px; border-radius: 8px;
+            font-weight: 600; font-size: 0.78rem; cursor: pointer;
+            text-align: center; text-decoration: none; transition: opacity 0.2s;
         }
+        .download-btn { background: rgba(168, 85, 247, 0.2); color: var(--text-color); border: 1px solid rgba(168, 85, 247, 0.4); }
+        .read-btn { background: linear-gradient(135deg, #a855f7, #c084fc); color: #0f0c1b; }
 
-        .download-btn {
-            background: rgba(168, 85, 247, 0.2);
-            color: var(--text-color);
-            border: 1px solid rgba(168, 85, 247, 0.4);
-        }
-        .download-btn:hover { background: rgba(168, 85, 247, 0.4); }
-
-        .read-btn {
-            background: linear-gradient(135deg, #a855f7, #c084fc);
-            color: #0f0c1b;
-            box-shadow: 0 4px 10px rgba(192, 132, 252, 0.3);
-        }
-        .read-btn:hover { background: linear-gradient(135deg, #c084fc, #e9d5ff); }
-
-        /* READER MODAL */
+        /* Reader Modal */
         #reader-modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(15, 12, 27, 0.95);
-            z-index: 1000; backdrop-filter: blur(10px);
-            flex-direction: column;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 12, 27, 0.95); z-index: 1000; backdrop-filter: blur(10px); flex-direction: column;
         }
         #reader-modal.active { display: flex; }
-
         .modal-header {
-            padding: 15px 30px;
-            background: rgba(35, 27, 58, 0.95);
-            display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid rgba(192, 132, 252, 0.2);
+            padding: 15px 30px; background: rgba(35, 27, 58, 0.95);
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(192, 132, 252, 0.2);
         }
         .modal-title { font-size: 1.1rem; font-weight: 700; color: #ffffff; }
         .modal-controls { display: flex; gap: 15px; align-items: center; }
-        .modal-btn {
-            background: rgba(255, 255, 255, 0.1); color: white;
-            border: none; padding: 8px 15px; border-radius: 6px;
-            cursor: pointer; font-size: 0.8rem;
-        }
-        .modal-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .modal-btn { background: rgba(255, 255, 255, 0.1); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
         .close-modal { font-size: 1.5rem; color: #ff4d4d; cursor: pointer; background: none; border: none; }
-        #viewer { flex: 1; position: relative; max-width: 900px; width: 100%; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; }
+        #viewer { flex: 1; max-width: 900px; width: 100%; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -241,11 +207,18 @@
     </header>
 
     <div class="controls-container">
-        <input type="text" id="searchInput" placeholder="Search by title, author, or trope...">
+        <input type="text" id="searchInput" placeholder="Search title, author, or tag...">
+        <select id="tagFilter">
+            <option value="">All Tags / Tropes</option>
+        </select>
+        <select id="sortSelect">
+            <option value="reads">Sort by: Readers</option>
+            <option value="words">Sort by: Word Count</option>
+        </select>
     </div>
 
     <main id="archiveContainer">
-        <div style="text-align: center; color: var(--muted-text); padding: 40px;" id="loadingStatus">Loading your library from metadata.json...</div>
+        <div style="text-align: center; color: var(--muted-text); padding: 40px;" id="loadingStatus">Loading your library...</div>
     </main>
 
     <!-- READER MODAL -->
@@ -262,108 +235,171 @@
     </div>
 
     <script>
-        let bookInstance = null;
-        let renditionInstance = null;
+        let allFics = [];
+        let starredFics = JSON.parse(localStorage.getItem('starredFics') || '[]');
 
-        // Fetch metadata.json generated by Python script
         fetch('metadata.json')
             .then(res => res.json())
             .then(data => {
                 document.getElementById('loadingStatus').style.display = 'none';
-                buildArchive(data);
+                allFics = data.stories || data;
+                populateTagDropdown();
+                renderArchive(allFics);
             })
-            .catch(err => {
-                document.getElementById('loadingStatus').innerText = "Could not load metadata.json yet. Make sure your Python script generated and pushed it!";
+            .catch(() => {
+                document.getElementById('loadingStatus').innerText = "metadata.json not found yet. Run your Python script to generate it!";
             });
 
-        function buildArchive(fics) {
+        function populateTagDropdown() {
+            const tagSet = new Set();
+            allFics.forEach(f => (f.tags || f.tropes || []).forEach(t => tagSet.add(t)));
+            const select = document.getElementById('tagFilter');
+            tagSet.forEach(tag => {
+                const opt = document.createElement('option');
+                opt.value = tag;
+                opt.textContent = tag;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderArchive(fics) {
             const container = document.getElementById('archiveContainer');
             container.innerHTML = '';
 
-            // Group by primary trope or default to "General Archive"
+            // 1. Best Sellers Banner (Starred Fics)
+            const starredList = fics.filter(f => starredFics.includes(f.id || f.title));
+            if (starredList.length > 0) {
+                container.appendChild(createTropeSection("Best Sellers ⭐", starredList, false));
+            }
+
+            // 2. Group by Trope / Forgotten Gals
             const tropes = {};
             fics.forEach(fic => {
-                const trope = (fic.tropes && fic.tropes.length > 0) ? fic.tropes[0] : 'All Time Favorites';
+                const titleLower = (fic.title || "").toLowerCase();
+                const wordCount = fic.word_count || fic.wordCount || 0;
+                const primaryTags = fic.tags || fic.tropes || [];
+
+                let trope = primaryTags.length > 0 ? primaryTags[0] : 'General Archive';
+
+                // The Forgotten Gals rule
+                if (wordCount < 60000 || titleLower.includes('imagine') || titleLower.includes('imagines')) {
+                    trope = 'The Forgotten Gals';
+                }
+
                 if (!tropes[trope]) tropes[trope] = [];
                 tropes[trope].push(fic);
             });
 
-            // Sort fics inside each trope by word count / reads (longest first)
+            // Render each trope row (capped at top 10 sorted by readers)
             for (const trope in tropes) {
-                tropes[trope].sort((a, b) => b.word_count - a.word_count);
-
-                // Create Section
-                const section = document.createElement('section');
-                section.className = 'trope-section';
-                section.innerHTML = `
-                    <div class="trope-title">${trope}</div>
-                    <div class="fic-slider" id="slider-${trope.replace(/\s+/g, '-')}"></div>
-                `;
-                container.appendChild(section);
-
-                const slider = section.querySelector('.fic-slider');
-                tropes[trope].forEach(fic => {
-                    const card = document.createElement('div');
-                    card.className = 'fic-card';
-                    card.innerHTML = `
-                        <div>
-                            ${fic.cover_image ? `<img src="${fic.cover_image}" class="fic-cover" alt="Cover">` : ''}
-                            <div class="card-header">
-                                <h3 class="fic-title">${fic.title}</h3>
-                                <span>★</span>
-                            </div>
-                            <div class="fic-author">${fic.author}</div>
-                            <div class="fic-summary">${fic.summary || 'No summary available.'}</div>
-                            <div class="tags-container">
-                                ${(fic.tropes || []).map(t => `<span class="tag">${t}</span>`).join('')}
-                            </div>
-                        </div>
-                        <div>
-                            <div class="fic-stats">
-                                <span>${(fic.word_count || 0).toLocaleString()} words</span>
-                                <span>Est. ${( (fic.word_count || 0) / 9000 ).toFixed(1)}h</span>
-                            </div>
-                            <div class="button-row">
-                                <a href="epub/${fic.filename}" class="action-btn download-btn" download>Download</a>
-                                <button class="action-btn read-btn" onclick="openReader('epub/${fic.filename}', '${fic.title.replace(/'/g, "\\'")}')">Read Web</button>
-                            </div>
-                        </div>
-                    `;
-                    slider.appendChild(card);
-                });
+                // Sort by readers descending
+                tropes[trope].sort((a, b) => (b.reads || 0) - (a.reads || 0));
+                const top10 = tropes[trope].slice(0, 10);
+                
+                container.appendChild(createTropeSection(trope, top10, true));
             }
         }
 
-        // Search Filter
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            document.querySelectorAll('.fic-card').forEach(card => {
-                card.style.display = card.innerText.toLowerCase().includes(query) ? 'flex' : 'none';
+        function createTropeSection(title, fics, showMoreBtn) {
+            const section = document.createElement('section');
+            section.className = 'trope-section';
+            
+            let headerHTML = `<div class="trope-title">${title}</div>`;
+            if (showMoreBtn) {
+                headerHTML += `<button class="more-like-this-btn" onclick="filterByTag('${title}')">More Like This →</button>`;
+            }
+
+            section.innerHTML = `
+                <div class="trope-header">${headerHTML}</div>
+                <div class="fic-slider"></div>
+            `;
+
+            const slider = section.querySelector('.fic-slider');
+            fics.forEach(fic => {
+                const ficId = fic.id || fic.title;
+                const isStarred = starredFics.includes(ficId);
+                const card = document.createElement('div');
+                card.className = 'fic-card';
+                card.innerHTML = `
+                    <div>
+                        ${fic.cover_image ? `<img src="${fic.cover_image}" class="fic-cover" alt="Cover">` : ''}
+                        <div class="card-header">
+                            <h3 class="fic-title">${fic.title}</h3>
+                            <span class="star-icon ${isStarred ? 'starred' : ''}" onclick="toggleStar('${ficId}')">★</span>
+                        </div>
+                        <div class="fic-author">${fic.author || 'Unknown Author'}</div>
+                        <div class="fic-summary">${fic.summary || 'No summary available.'}</div>
+                        <div class="tags-container">
+                            ${(fic.tags || fic.tropes || []).map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="fic-stats">
+                            <span>👥 ${(fic.reads || 0).toLocaleString()}</span>
+                            <span>📖 ${(fic.word_count || fic.wordCount || 0).toLocaleString()}w</span>
+                        </div>
+                        <div class="button-row">
+                            <a href="epub/${fic.filename || fic.epubFile}" class="action-btn download-btn" download>Download</a>
+                            <button class="action-btn read-btn" onclick="openReader('epub/${fic.filename || fic.epubFile}', '${fic.title.replace(/'/g, "\\'")}')">Read Web</button>
+                        </div>
+                    </div>
+                `;
+                slider.appendChild(card);
             });
-        });
+            return section;
+        }
+
+        function toggleStar(ficId) {
+            if (starredFics.includes(ficId)) {
+                starredFics = starredFics.filter(id => id !== ficId);
+            } else {
+                starredFics.push(ficId);
+            }
+            localStorage.setItem('starredFics', JSON.stringify(starredFics));
+            applyFilters();
+        }
+
+        function filterByTag(tag) {
+            document.getElementById('tagFilter').value = tag;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const selectedTag = document.getElementById('tagFilter').value;
+            const sortBy = document.getElementById('sortSelect').value;
+
+            let filtered = allFics.filter(fic => {
+                const matchQuery = (fic.title + fic.author + (fic.tags || []).join(' ')).toLowerCase().includes(query);
+                const matchTag = !selectedTag || (fic.tags || fic.tropes || []).includes(selectedTag);
+                return matchQuery && matchTag;
+            });
+
+            if (sortBy === 'reads') {
+                filtered.sort((a, b) => (b.reads || 0) - (a.reads || 0));
+            } else if (sortBy === 'words') {
+                filtered.sort((a, b) => (b.word_count || b.wordCount || 0) - (a.word_count || a.wordCount || 0));
+            }
+
+            renderArchive(filtered);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('tagFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
         // EPUB Reader Logic
-        function openReader(epubPath, title) {
+        let bookInstance = null, renditionInstance = null;
+        function openReader(path, title) {
             document.getElementById('modal-fic-title').innerText = "Reading: " + title;
             document.getElementById('reader-modal').classList.add('active');
             document.getElementById('viewer').innerHTML = '';
-
-            bookInstance = ePub(epubPath);
-            renditionInstance = bookInstance.renderTo("viewer", {
-                width: "100%",
-                height: "100%"
-            });
+            bookInstance = ePub(path);
+            renditionInstance = bookInstance.renderTo("viewer", { width: "100%", height: "100%" });
             renditionInstance.display();
         }
-
-        document.getElementById('prev-page').addEventListener('click', () => {
-            if (renditionInstance) renditionInstance.prev();
-        });
-
-        document.getElementById('next-page').addEventListener('click', () => {
-            if (renditionInstance) renditionInstance.next();
-        });
-
+        document.getElementById('prev-page').addEventListener('click', () => renditionInstance && renditionInstance.prev());
+        document.getElementById('next-page').addEventListener('click', () => renditionInstance && renditionInstance.next());
         document.getElementById('closeReader').addEventListener('click', () => {
             document.getElementById('reader-modal').classList.remove('active');
             if (bookInstance) bookInstance.destroy();
