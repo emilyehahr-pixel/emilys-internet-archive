@@ -4,396 +4,337 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fanfiction Archive</title>
+    <!-- Importing a gorgeous high-end girly cursive font -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* --- Pastel Purple Theme & Girly Styling --- */
         :root {
-            --bg-color: #f5f3ff; /* Very light lavender */
-            --text-color: #4a148c; /* Deep purple text */
-            --card-bg: #ffffff; /* White cards */
-            --accent-color: #d1c4e9; /* Lighter purple accents */
-            --star-color: #fbc02d; /* Yellow star color */
-            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --bg-color: #0f0c1b;
+            --container-bg: rgba(25, 20, 40, 0.75);
+            --text-color: #f3e8ff;
+            --muted-text: #c4b5fd;
+            --card-bg: rgba(35, 27, 58, 0.85);
+            --accent-color: #ec4899;
+            --accent-glow: rgba(236, 72, 153, 0.4);
+            --star-color: #fbbf24;
+            --font-main: 'Inter', sans-serif;
+            --font-cursive: 'Pacifico', cursive;
         }
 
         body {
-            font-family: var(--font-family);
-            background-color: var(--bg-color);
+            font-family: var(--font-main);
+            background-color: var--bg-color;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,0.15) 1px, transparent 1px),
+                radial-gradient(rgba(236, 72, 153, 0.2), rgba(255,255,255,0) 2px, transparent 2px);
+            background-size: 55px 55px, 40px 40px;
+            background-position: 0 0, 20px 20px;
             color: var(--text-color);
             margin: 0;
             padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* 2008 Retro Sparkle Stars */
+        .star-decoration {
+            position: fixed;
+            color: var(--star-color);
+            font-size: 24px;
+            text-shadow: 0 0 10px var(--star-color), 0 0 20px var(--accent-color);
+            animation: twinkle 2s infinite ease-in-out;
+            z-index: 999;
+            pointer-events: none;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            padding: 40px 20px 20px;
             position: relative;
         }
 
-        header h1 {
+        h1 {
+            font-family: var(--font-cursive);
+            font-size: 3.5rem;
+            color: #f472b6;
             margin: 0;
-            display: inline-block;
-            font-size: 3em;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.6), 0 0 40px rgba(168, 85, 247, 0.4);
+            letter-spacing: 1px;
         }
 
-        /* Yellow Stars Decoration */
-        header::before, header::after {
-            content: '★';
-            color: var(--star-color);
-            font-size: 2em;
-            position: absolute;
-            top: -10px;
+        .subtitle {
+            color: var(--muted-text);
+            font-size: 0.95rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        header::before { left: 10px; transform: rotate(-15deg); }
-        header::after { right: 10px; transform: rotate(15deg); }
 
-        /* --- Search & Filter Bar --- */
+        /* Search & Filters */
         .controls-container {
+            max-width: 800px;
+            margin: 20px auto 40px;
             display: flex;
-            justify-content: center;
             gap: 15px;
-            margin-bottom: 30px;
+            justify-content: center;
             flex-wrap: wrap;
         }
 
         input[type="text"] {
-            padding: 10px;
-            border: 2px solid var(--accent-color);
-            border-radius: 20px;
-            width: 300px;
-            font-family: inherit;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            background-color: var(--accent-color);
+            width: 100%;
+            max-width: 450px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 30px;
             color: var(--text-color);
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
-        .filter-btn:hover { background-color: #b39ddb; }
 
-        /* --- Tag Filter Panel (Hidden by Default) --- */
-        #tag-panel {
-            display: none;
-            background-color: #ede7f6;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
         }
-        .tag-checkbox { margin: 5px; }
 
-        /* --- Story Grid Layout --- */
-        #archive-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        /* Netflix-style Row Sliders */
+        .trope-section {
+            margin-bottom: 45px;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px;
+        }
+
+        .trope-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fbcfe8;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .fic-slider {
+            display: flex;
             gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scroll-behavior: smooth;
         }
 
-        /* --- Best Sellers Section Header --- */
-        .section-header {
-            grid-column: 1 / -1; /* Span full width */
-            margin-top: 30px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 5px;
+        .fic-slider::-webkit-scrollbar {
+            height: 8px;
+        }
+        .fic-slider::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+        .fic-slider::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.3);
+            border-radius: 4px;
         }
 
-        /* --- The Story Card --- */
-        .story-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--accent-color);
-            border-radius: 15px;
+        /* Card Design */
+        .fic-card {
+            flex: 0 0 300px;
+            background: var(--card-bg);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 16px;
             padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s;
             position: relative;
         }
-        .story-card:hover { transform: scale(1.03); }
 
-        /* Favorite Star Button (Top Right) */
-        .favorite-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #ccc; /* Default gray star */
+        .fic-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 12px 40px var(--accent-glow);
         }
-        .favorite-btn.is-favorite { color: var(--star-color); }
 
-        /* Card Content */
-        .card-title { margin-top: 0; font-size: 1.4em; }
-        .card-author { font-style: italic; color: #7e57c2; margin-bottom: 10px; }
-        .card-tags { color: #777; font-size: 0.9em; margin-bottom: 15px; }
-        .card-tags span { background: #f3e5f5; padding: 2px 6px; border-radius: 4px; margin-right: 4px; display: inline-block; margin-bottom: 4px;}
-
-        /* Card Footer (Reads/Time) */
-        .card-footer {
+        .card-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85em;
-            color: #555;
-            margin-top: auto;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            align-items: flex-start;
         }
 
-        /* Read/Download Button */
-        .read-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: var(--text-color);
+        .fic-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 5px 0;
+        }
+
+        .fic-author {
+            font-size: 0.850rem;
+            color: var(--muted-text);
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            background: rgba(236, 72, 153, 0.15);
+            color: #fbcfe8;
+            padding: 3px 9px;
+            border-radius: 20px;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .fic-stats {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 10px;
+            margin-bottom: 12px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #db2777, #9333ea);
             color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
             text-align: center;
             text-decoration: none;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-family: inherit;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
         }
-        .read-btn:hover { background-color: #673ab7; }
 
-        /* --- Responsive Design --- */
-        @media (max-width: 600px) {
-            header h1 { font-size: 2em; }
-            input[type="text"] { width: 80%; }
+        .download-btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
 
+    <!-- Retro 2008 Sparkle Elements -->
+    <div class="star-decoration" style="top: 8%; left: 10%;">✦</div>
+    <div class="star-decoration" style="top: 15%; right: 12%; animation-delay: 0.5s;">★</div>
+    <div class="star-decoration" style="top: 45%; left: 4%;">✨</div>
+    <div class="star-decoration" style="top: 65%; right: 6%; animation-delay: 1s;">✦</div>
+
     <header>
         <h1>Fanfiction Archive</h1>
+        <div class="subtitle">Secure High-Tech Digital Vault</div>
     </header>
 
-    <!-- Search & Filter Controls -->
     <div class="controls-container">
-        <input type="text" id="searchInput" placeholder="Search Title or Author...">
-        <button class="filter-btn" onclick="toggleTagPanel()">Filter by Tags ▾</button>
-        <button class="filter-btn" onclick="clearFilters()">Clear Filters</button>
+        <input type="text" id="searchInput" placeholder="Search by title, author, or trope...">
     </div>
 
-    <!-- Tag Panel (Initially Hidden) -->
-    <div id="tag-panel">
-        <p>Select tags to include:</p>
-        <!-- Tags will be populated here by JavaScript -->
-    </div>
+    <main id="archiveContainer">
+        <!-- Netflix Style Row: Romance & Fluff -->
+        <section class="trope-section">
+            <div class="trope-title">Romance & Fluff </div>
+            <div class="fic-slider">
+                <div class="fic-card">
+                    <div>
+                        <div class="card-header">
+                            <h3 class="fic-title">The Lavender Sky</h3>
+                            <span>★</span>
+                        </div>
+                        <div class="fic-author">StarGazer77</div>
+                        <div class="tags-container">
+                            <span class="tag">Romance</span>
+                            <span class="tag">Fluff</span>
+                            <span class="tag">Slow Burn</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="fic-stats">
+                            <span>Reads: 125,000</span>
+                            <span>6.5h read</span>
+                        </div>
+                        <a href="epub/the-lavender-sky.epub" class="download-btn" download>Download EPUB</a>
+                    </div>
+                </div>
 
-    <!-- Archive Grid where stories will appear -->
-    <div id="archive-grid">
-        <!-- Best Sellers (Favorites) will appear here first -->
-        <h2 id="best-sellers-header" class="section-header" style="display:none;">Best Sellers ✨</h2>
-        <div id="best-sellers-container" class="story-grid-section"></div>
+                <div class="fic-card">
+                    <div>
+                        <div class="card-header">
+                            <h3 class="fic-title">Echoes of Yesterday</h3>
+                            <span>★</span>
+                        </div>
+                        <div class="fic-author">StarGazer77</div>
+                        <div class="tags-container">
+                            <span class="tag">Romance</span>
+                            <span class="tag">Time Travel</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="fic-stats">
+                            <span>Reads: 210,000</span>
+                            <span>7.5h read</span>
+                        </div>
+                        <a href="epub/echoes-of-yesterday.epub" class="download-btn" download>Download EPUB</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <!-- Regular Archive Title -->
-        <h2 id="regular-header" class="section-header" style="display:none;">All Stories</h2>
-        <div id="regular-container" class="story-grid-section"></div>
-    </div>
+        <!-- Netflix Style Row: Angst & Mystery -->
+        <section class="trope-section">
+            <div class="trope-title">Angst & Mystery</div>
+            <div class="fic-slider">
+                <div class="fic-card">
+                    <div>
+                        <div class="card-header">
+                            <h3 class="fic-title">Midnight Whispers</h3>
+                            <span>★</span>
+                        </div>
+                        <div class="fic-author">MoonlightWriter</div>
+                        <div class="tags-container">
+                            <span class="tag">Angst</span>
+                            <span class="tag">Mystery</span>
+                            <span class="tag">Hurt/Comfort</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="fic-stats">
+                            <span>Reads: 98,000</span>
+                            <span>4.5h read</span>
+                        </div>
+                        <a href="epub/midnight-whispers.epub" class="download-btn" download>Download EPUB</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        // --- JavaScript ---
-        // (We will need to populate this after generating the metadata.json)
-
-        // 1. Sample Data (TEMPORARY: DELETE AFTER METADATA.JSON IS READY)
-        // In real usage, this array will be replaced by fetching the JSON.
-        const tempStories = [
-            {
-                "id": "1",
-                "title": "The Lavender Sky",
-                "author": "StarGazer77",
-                "url": "https://www.wattpad.com/story/example1",
-                "wordCount": 95000,
-                "readingTimeHours": 6.5,
-                "tags": ["Romance", "Fluff", "Slow Burn"],
-                "epubFile": "epub/the_lavender_sky.epub",
-                "reads": 125000
-            },
-            {
-                "id": "2",
-                "title": "Midnight Whispers",
-                "author": "MoonlightWriter",
-                "url": "https://www.wattpad.com/story/example2",
-                "wordCount": 68000,
-                "reads": 98000,
-                "readingTimeHours": 4.5,
-                "tags": ["Angst", "Mystery", "Hurt/Comfort"],
-                "epubFile": "epub/midnight_whispers.epub"
-            },
-            {
-                "id": "3",
-                "title": "Echoes of Yesterday",
-                "author": "StarGazer77",
-                "url": "https://www.wattpad.com/story/example3",
-                "wordCount": 110000,
-                "reads": 210000,
-                "readingTimeHours": 7.5,
-                "tags": ["Adventure", "Time Travel", "Romance"],
-                "epubFile": "epub/echoes_of_yesterday.epub"
-            }
-        ];
-
-        // State for managing favorites and filters
-        let allStories = [];
-        let currentFavorites = JSON.parse(localStorage.getItem('favoriteFics')) || [];
-        let activeTagFilters = new Set();
-        let uniqueTags = new Set();
-
-        // 2. Initialization: Load Data (Connect to GitHub later)
-        function initArchive() {
-            // --- HOW IT WILL WORK LATER: ---
-            // fetch('metadata.json')
-            //    .then(response => response.json())
-            //    .then(data => {
-            //        allStories = data.stories;
-            //        renderArchive();
-            //    });
-
-            // --- TEMPORARY: USING SAMPLE DATA ---
-            allStories = tempStories;
-            renderArchive();
-        }
-
-        // 3. Rendering Function
-        function renderArchive() {
-            // A. Populate Tag Filter Panel
-            allStories.forEach(story => {
-                story.tags.forEach(tag => uniqueTags.add(tag));
+        // Simple search filter prototype
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.fic-card');
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'flex' : 'none';
             });
-
-            const tagPanel = document.getElementById('tag-panel');
-            tagPanel.innerHTML = '<p>Select tags to include:</p>';
-            Array.from(uniqueTags).sort().forEach(tag => {
-                const isChecked = activeTagFilters.has(tag) ? 'checked' : '';
-                tagPanel.innerHTML += `
-                    <label class="tag-checkbox">
-                        <input type="checkbox" value="${tag}" ${isChecked} onchange="handleTagChange(this)">
-                        ${tag}
-                    </label>
-                `;
-            });
-
-            // B. Filter Stories based on Search and Tags
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-
-            const filteredStories = allStories.filter(story => {
-                const titleMatch = story.title.toLowerCase().includes(searchTerm);
-                const authorMatch = story.author.toLowerCase().includes(searchTerm);
-                const searchMatch = titleMatch || authorMatch;
-
-                let tagMatch = true;
-                if (activeTagFilters.size > 0) {
-                    tagMatch = story.tags.some(tag => activeTagFilters.has(tag));
-                }
-
-                return searchMatch && tagMatch;
-            });
-
-            // C. Separate Favorites and Regular Stories
-            const bestSellersContainer = document.getElementById('best-sellers-container');
-            const regularContainer = document.getElementById('regular-container');
-            const bestSellersHeader = document.getElementById('best-sellers-header');
-            const regularHeader = document.getElementById('regular-header');
-
-            bestSellersContainer.innerHTML = '';
-            regularContainer.innerHTML = '';
-
-            const favorites = filteredStories.filter(story => currentFavorites.includes(story.id));
-            const regulars = filteredStories.filter(story => !currentFavorites.includes(story.id));
-
-            // D. Display Sections
-            if (favorites.length > 0) {
-                bestSellersHeader.style.display = 'block';
-                favorites.forEach(story => bestSellersContainer.appendChild(createStoryCard(story)));
-            } else {
-                bestSellersHeader.style.display = 'none';
-            }
-
-            if (regulars.length > 0) {
-                // Only show "All Stories" header if we also have favorites displayed,
-                // otherwise it's redundant. (Feel free to change this logic!)
-                regularHeader.style.display = (favorites.length > 0) ? 'block' : 'none';
-                regulars.forEach(story => regularContainer.appendChild(createStoryCard(story)));
-            } else {
-                regularHeader.style.display = 'none';
-            }
-        }
-
-        // 4. Helper to Create HTML for a Single Story Card
-        function createStoryCard(story) {
-            const card = document.createElement('div');
-            card.className = 'story-card';
-            card.id = `story-${story.id}`;
-
-            const isFav = currentFavorites.includes(story.id);
-            const favClass = isFav ? 'is-favorite' : '';
-
-            const tagsHtml = story.tags.map(tag => `<span>${tag}</span>`).join('');
-
-            card.innerHTML = `
-                <h3 class="card-title">${story.title}</h3>
-                <div class="card-author">${story.author}</div>
-                <div class="card-tags">${tagsHtml}</div>
-                <div class="card-footer">
-                    <span>Reads: ${story.reads ? story.reads.toLocaleString() : 'Unknown'}</span>
-                    <span>Est. Time: ${story.readingTimeHours}h</span>
-                </div>
-                <a href="${story.epubFile}" class="read-btn" download>Download EPUB</a>
-                <button class="favorite-btn ${favClass}" onclick="toggleFavorite('${story.id}')">★</button>
-            `;
-
-            return card;
-        }
-
-        // 5. Event Handlers
-        // Search Input changes
-        document.getElementById('searchInput').addEventListener('input', renderArchive);
-
-        // Toggle Tag Panel
-        function toggleTagPanel() {
-            const panel = document.getElementById('tag-panel');
-            panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
-        }
-
-        // Tag Checkbox change
-        function handleTagChange(checkbox) {
-            if (checkbox.checked) {
-                activeTagFilters.add(checkbox.value);
-            } else {
-                activeTagFilters.delete(checkbox.value);
-            }
-            renderArchive();
-        }
-
-        // Clear Filters
-        function clearFilters() {
-            activeTagFilters.clear();
-            document.getElementById('searchInput').value = '';
-            renderArchive(); // This re-checks all checkboxes and filters
-        }
-
-        // Toggle Favorite
-        function toggleFavorite(storyId) {
-            const index = currentFavorites.indexOf(storyId);
-            if (index > -1) {
-                currentFavorites.splice(index, 1); // Remove from favorites
-            } else {
-                currentFavorites.push(storyId); // Add to favorites
-            }
-            localStorage.setItem('favoriteFics', JSON.stringify(currentFavorites));
-            renderArchive(); // Re-render to move the card
-        }
-
-        // Initial Setup
-        initArchive();
-
+        });
     </script>
-
 </body>
 </html>
