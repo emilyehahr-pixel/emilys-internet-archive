@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanfiction Archive</title>
+    <style>
+        /* --- Pastel Purple Theme & Girly Styling --- */
+        :root {
+            --bg-color: #f5f3ff; /* Very light lavender */
+            --text-color: #4a148c; /* Deep purple text */
+            --card-bg: #ffffff; /* White cards */
+            --accent-color: #d1c4e9; /* Lighter purple accents */
+            --star-color: #fbc02d; /* Yellow star color */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            display: inline-block;
+            font-size: 3em;
+        }
+
+        /* Yellow Stars Decoration */
+        header::before, header::after {
+            content: '★';
+            color: var(--star-color);
+            font-size: 2em;
+            position: absolute;
+            top: -10px;
+        }
+        header::before { left: 10px; transform: rotate(-15deg); }
+        header::after { right: 10px; transform: rotate(15deg); }
+
+        /* --- Search & Filter Bar --- */
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 2px solid var(--accent-color);
+            border-radius: 20px;
+            width: 300px;
+            font-family: inherit;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .filter-btn:hover { background-color: #b39ddb; }
+
+        /* --- Tag Filter Panel (Hidden by Default) --- */
+        #tag-panel {
+            display: none;
+            background-color: #ede7f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .tag-checkbox { margin: 5px; }
+
+        /* --- Story Grid Layout --- */
+        #archive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* --- Best Sellers Section Header --- */
+        .section-header {
+            grid-column: 1 / -1; /* Span full width */
+            margin-top: 30px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+
+        /* --- The Story Card --- */
+        .story-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .story-card:hover { transform: scale(1.03); }
+
+        /* Favorite Star Button (Top Right) */
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ccc; /* Default gray star */
+        }
+        .favorite-btn.is-favorite { color: var(--star-color); }
+
+        /* Card Content */
+        .card-title { margin-top: 0; font-size: 1.4em; }
+        .card-author { font-style: italic; color: #7e57c2; margin-bottom: 10px; }
+        .card-tags { color: #777; font-size: 0.9em; margin-bottom: 15px; }
+        .card-tags span { background: #f3e5f5; padding: 2px 6px; border-radius: 4px; margin-right: 4px; display: inline-block; margin-bottom: 4px;}
+
+        /* Card Footer (Reads/Time) */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #555;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Read/Download Button */
+        .read-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: inherit;
+        }
+        .read-btn:hover { background-color: #673ab7; }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 600px) {
+            header h1 { font-size: 2em; }
+            input[type="text"] { width: 80%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Fanfiction Archive</h1>
+    </header>
+
+    <!-- Search & Filter Controls -->
+    <div class="controls-container">
+        <input type="text" id="searchInput" placeholder="Search Title or Author...">
+        <button class="filter-btn" onclick="toggleTagPanel()">Filter by Tags ▾</button>
+        <button class="filter-btn" onclick="clearFilters()">Clear Filters</button>
+    </div>
+
+    <!-- Tag Panel (Initially Hidden) -->
+    <div id="tag-panel">
+        <p>Select tags to include:</p>
+        <!-- Tags will be populated here by JavaScript -->
+    </div>
+
+    <!-- Archive Grid where stories will appear -->
+    <div id="archive-grid">
+        <!-- Best Sellers (Favorites) will appear here first -->
+        <h2 id="best-sellers-header" class="section-header" style="display:none;">Best Sellers ✨</h2>
+        <div id="best-sellers-container" class="story-grid-section"></div>
+
+        <!-- Regular Archive Title -->
+        <h2 id="regular-header" class="section-header" style="display:none;">All Stories</h2>
+        <div id="regular-container" class="story-grid-section"></div>
+    </div>
+
+    <script>
+        // --- JavaScript ---
+        // (We will need to populate this after generating the metadata.json)
+
+        // 1. Sample Data (TEMPORARY: DELETE AFTER METADATA.JSON IS READY)
+        // In real usage, this array will be replaced by fetching the JSON.
+        const tempStories = [
+            {
+                "id": "1",
+                "title": "The Lavender Sky",
+                "author": "StarGazer77",
+                "url": "https://www.wattpad.com/story/example1",
+                "wordCount": 95000,
+                "readingTimeHours": 6.5,
+                "tags": ["Romance", "Fluff", "Slow Burn"],
+                "epubFile": "epub/the_lavender_sky.epub",
+                "reads": 125000
+            },
+            {
+                "id": "2",
+                "title": "Midnight Whispers",
+                "author": "MoonlightWriter",
+                "url": "https://www.wattpad.com/story/example2",
+                "wordCount": 68000,
+                "reads": 98000,
+                "readingTimeHours": 4.5,
+                "tags": ["Angst", "Mystery", "Hurt/Comfort"],
+                "epubFile": "epub/midnight_whispers.epub"
+            },
+            {
+                "id": "3",
+                "title": "Echoes of Yesterday",
+                "author": "StarGazer77",
+                "url": "https://www.wattpad.com/story/example3",
+                "wordCount": 110000,
+                "reads": 210000,
+                "readingTimeHours": 7.5,
+                "tags": ["Adventure", "Time Travel", "Romance"],
+                "epubFile": "epub/echoes_of_yesterday.epub"
+            }
+        ];
+
+        // State for managing favorites and filters
+        let allStories = [];
+        let currentFavorites = JSON.parse(localStorage.getItem('favoriteFics')) || [];
+        let activeTagFilters = new Set();
+        let uniqueTags = new Set();
+
+        // 2. Initialization: Load Data (Connect to GitHub later)
+        function initArchive() {
+            // --- HOW IT WILL WORK LATER: ---
+            // fetch('metadata.json')
+            //    .then(response => response.json())
+            //    .then(data => {
+            //        allStories = data.stories;
+            //        renderArchive();
+            //    });
+
+            // --- TEMPORARY: USING SAMPLE DATA ---
+            allStories = tempStories;
+            renderArchive();
+        }
+
+        // 3. Rendering Function
+        function renderArchive() {
+            // A. Populate Tag Filter Panel
+            allStories.forEach(story => {
+                story.tags.forEach(tag => uniqueTags.add(tag));
+            });
+
+            const tagPanel = document.getElementById('tag-panel');
+            tagPanel.innerHTML = '<p>Select tags to include:</p>';
+            Array.from(uniqueTags).sort().forEach(tag => {
+                const isChecked = activeTagFilters.has(tag) ? 'checked' : '';
+                tagPanel.innerHTML += `
+                    <label class="tag-checkbox">
+                        <input type="checkbox" value="${tag}" ${isChecked} onchange="handleTagChange(this)">
+                        ${tag}
+                    </label>
+                `;
+            });
+
+            // B. Filter Stories based on Search and Tags
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            const filteredStories = allStories.filter(story => {
+                const titleMatch = story.title.toLowerCase().includes(searchTerm);
+                const authorMatch = story.author.toLowerCase().includes(searchTerm);
+                const searchMatch = titleMatch || authorMatch;
+
+                let tagMatch = true;
+                if (activeTagFilters.size > 0) {
+                    tagMatch = story.tags.some(tag => activeTagFilters.has(tag));
+                }
+
+                return searchMatch && tagMatch;
+            });
+
+            // C. Separate Favorites and Regular Stories
+            const bestSellersContainer = document.getElementById('best-sellers-container');
+            const regularContainer = document.getElementById('regular-container');
+            const bestSellersHeader = document.getElementById('best-sellers-header');
+            const regularHeader = document.getElementById('regular-header');
+
+            bestSellersContainer.innerHTML = '';
+            regularContainer.innerHTML = '';
+
+            const favorites = filteredStories.filter(story => currentFavorites.includes(story.id));
+            const regulars = filteredStories.filter(story => !currentFavorites.includes(story.id));
+
+            // D. Display Sections
+            if (favorites.length > 0) {
+                bestSellersHeader.style.display = 'block';
+                favorites.forEach(story => bestSellersContainer.appendChild(createStoryCard(story)));
+            } else {
+                bestSellersHeader.style.display = 'none';
+            }
+
+            if (regulars.length > 0) {
+                // Only show "All Stories" header if we also have favorites displayed,
+                // otherwise it's redundant. (Feel free to change this logic!)
+                regularHeader.style.display = (favorites.length > 0) ? 'block' : 'none';
+                regulars.forEach(story => regularContainer.appendChild(createStoryCard(story)));
+            } else {
+                regularHeader.style.display = 'none';
+            }
+        }
+
+        // 4. Helper to Create HTML for a Single Story Card
+        function createStoryCard(story) {
+            const card = document.createElement('div');
+            card.className = 'story-card';
+            card.id = `story-${story.id}`;
+
+            const isFav = currentFavorites.includes(story.id);
+            const favClass = isFav ? 'is-favorite' : '';
+
+            const tagsHtml = story.tags.map(tag => `<span>${tag}</span>`).join('');
+
+            card.innerHTML = `
+                <h3 class="card-title">${story.title}</h3>
+                <div class="card-author">${story.author}</div>
+                <div class="card-tags">${tagsHtml}</div>
+                <div class="card-footer">
+                    <span>Reads: ${story.reads ? story.reads.toLocaleString() : 'Unknown'}</span>
+                    <span>Est. Time: ${story.readingTimeHours}h</span>
+                </div>
+                <a href="${story.epubFile}" class="read-btn" download>Download EPUB</a>
+                <button class="favorite-btn ${favClass}" onclick="toggleFavorite('${story.id}')">★</button>
+            `;
+
+            return card;
+        }
+
+        // 5. Event Handlers
+        // Search Input changes
+        document.getElementById('searchInput').addEventListener('input', renderArchive);
+
+        // Toggle Tag Panel
+        function toggleTagPanel() {
+            const panel = document.getElementById('tag-panel');
+            panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+        }
+
+        // Tag Checkbox change
+        function handleTagChange(checkbox) {
+            if (checkbox.checked) {
+                activeTagFilters.add(checkbox.value);
+            } else {
+                activeTagFilters.delete(checkbox.value);
+            }
+            renderArchive();
+        }
+
+        // Clear Filters
+        function clearFilters() {
+            activeTagFilters.clear();
+            document.getElementById('searchInput').value = '';
+            renderArchive(); // This re-checks all checkboxes and filters
+        }
+
+        // Toggle Favorite
+        function toggleFavorite(storyId) {
+            const index = currentFavorites.indexOf(storyId);
+            if (index > -1) {
+                currentFavorites.splice(index, 1); // Remove from favorites
+            } else {
+                currentFavorites.push(storyId); // Add to favorites
+            }
+            localStorage.setItem('favoriteFics', JSON.stringify(currentFavorites));
+            renderArchive(); // Re-render to move the card
+        }
+
+        // Initial Setup
+        initArchive();
+
+    </script>
+
+</body>
+</html>
