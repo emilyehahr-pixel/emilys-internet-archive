@@ -46,11 +46,11 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        header { text-align: center; padding: 40px 20px 20px; position: relative; }
+        header { text-align: center; padding: 30px 20px 10px; position: relative; }
 
         h1 {
             font-family: var(--font-cursive);
-            font-size: 4rem;
+            font-size: 3.5rem;
             margin: 0;
             background: linear-gradient(to right, #c084fc, #e9d5ff, #c084fc);
             -webkit-background-clip: text;
@@ -61,16 +61,35 @@
 
         .subtitle {
             color: var(--muted-text);
-            font-size: 0.95rem;
-            margin-top: 10px;
+            font-size: 0.9rem;
+            margin-top: 5px;
             text-transform: uppercase;
             letter-spacing: 3px;
             font-weight: 600;
         }
 
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex; justify-content: center; gap: 15px; margin: 25px 0;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            color: var(--muted-text);
+            padding: 10px 25px; border-radius: 30px;
+            cursor: pointer; font-weight: 600; font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--accent-color);
+            color: #0f0c1b;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
         /* Controls & Filters Bar */
         .controls-container {
-            max-width: 900px; margin: 30px auto;
+            max-width: 900px; margin: 20px auto 35px auto;
             display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;
         }
 
@@ -102,7 +121,7 @@
         }
 
         .trope-title {
-            font-size: 1.5rem; font-weight: 700; color: #e9d5ff; margin: 0;
+            font-size: 1.4rem; font-weight: 700; color: #e9d5ff; margin: 0;
         }
 
         .more-like-this-btn {
@@ -120,6 +139,11 @@
         .fic-slider::-webkit-scrollbar { height: 8px; }
         .fic-slider::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
         .fic-slider::-webkit-scrollbar-thumb { background: rgba(192, 132, 252, 0.3); border-radius: 10px; }
+
+        .fic-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px; max-width: 1400px; margin: 0 auto; padding: 0 20px;
+        }
 
         .fic-card {
             flex: 0 0 300px;
@@ -145,7 +169,7 @@
         }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .fic-title { font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 4px 0; }
+        .fic-title { font-size: 1.1rem; font-weight: 700; color: #ffffff; margin: 0 0 4px 0; }
         .star-icon { cursor: pointer; color: #6b7280; font-size: 1.2rem; transition: color 0.2s; }
         .star-icon.starred { color: var(--star-color); text-shadow: 0 0 8px var(--star-color); }
 
@@ -204,6 +228,11 @@
     <header>
         <h1>Fanfiction Archive</h1>
         <div class="subtitle">By Emily for Emily (and friends)</div>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" id="tabHome" onclick="switchTab('home')">Main Archive</button>
+            <button class="tab-btn" id="tabForgotten" onclick="switchTab('forgotten')">The Forgotten Gals ✨</button>
+        </div>
     </header>
 
     <div class="controls-container">
@@ -237,6 +266,7 @@
     <script>
         let allFics = [];
         let starredFics = JSON.parse(localStorage.getItem('starredFics') || '[]');
+        let currentTab = 'home';
 
         fetch('metadata.json')
             .then(res => res.json())
@@ -244,16 +274,17 @@
                 document.getElementById('loadingStatus').style.display = 'none';
                 allFics = data.stories || data;
                 populateTagDropdown();
-                renderArchive(allFics);
+                applyFilters();
             })
             .catch(() => {
-                document.getElementById('loadingStatus').innerText = "metadata.json not found yet. Run your Python script to generate it!";
+                document.getElementById('loadingStatus').innerText = "metadata.json not found yet. Run your script to generate it!";
             });
 
         function populateTagDropdown() {
             const tagSet = new Set();
             allFics.forEach(f => (f.tags || f.tropes || []).forEach(t => tagSet.add(t)));
             const select = document.getElementById('tagFilter');
+            select.innerHTML = '<option value="">All Tags / Tropes</option>';
             tagSet.forEach(tag => {
                 const opt = document.createElement('option');
                 opt.value = tag;
@@ -262,45 +293,82 @@
             });
         }
 
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tabHome').classList.toggle('active', tab === 'home');
+            document.getElementById('tabForgotten').classList.toggle('active', tab === 'forgotten');
+            applyFilters();
+        }
+
+        function isForgottenGal(fic) {
+            const titleLower = (fic.title || "").toLowerCase();
+            const wordCount = fic.word_count || fic.wordCount || 0;
+            return wordCount < 60000 || titleLower.includes('imagine') || titleLower.includes('imagines');
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const selectedTag = document.getElementById('tagFilter').value;
+            const sortBy = document.getElementById('sortSelect').value;
+
+            let filtered = allFics.filter(fic => {
+                const matchQuery = (fic.title + fic.author + (fic.tags || []).join(' ')).toLowerCase().includes(query);
+                const matchTag = !selectedTag || (fic.tags || fic.tropes || []).includes(selectedTag);
+                
+                const forgotten = isForgottenGal(fic);
+                const matchTab = (currentTab === 'forgotten') ? forgotten : !forgotten;
+
+                return matchQuery && matchTag && matchTab;
+            });
+
+            if (sortBy === 'reads') {
+                filtered.sort((a, b) => (b.reads || 0) - (a.reads || 0));
+            } else if (sortBy === 'words') {
+                filtered.sort((a, b) => (b.word_count || b.wordCount || 0) - (a.word_count || a.wordCount || 0));
+            }
+
+            renderArchive(filtered);
+        }
+
         function renderArchive(fics) {
             const container = document.getElementById('archiveContainer');
             container.innerHTML = '';
 
-            // 1. Best Sellers Banner (Starred Fics)
-            const starredList = fics.filter(f => starredFics.includes(f.id || f.title));
-            if (starredList.length > 0) {
-                container.appendChild(createTropeSection("Best Sellers ⭐", starredList, false));
+            if (currentTab === 'forgotten') {
+                // Display as a nice grid for Forgotten Gals tab
+                if (fics.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--muted-text); padding: 40px;">No stories found in The Forgotten Gals.</div>`;
+                    return;
+                }
+                const grid = document.createElement('div');
+                grid.className = 'fic-grid';
+                fics.forEach(fic => grid.appendChild(createCard(fic)));
+                container.appendChild(grid);
+                return;
             }
 
-            // 2. Group by Trope / Forgotten Gals
+            // Home Tab: Best Sellers Banner + Netflix Sliders for main tropes
+            const starredList = fics.filter(f => starredFics.includes(f.id || f.title));
+            if (starredList.length > 0) {
+                container.appendChild(createTropeSlider("Best Sellers ⭐", starredList, false));
+            }
+
             const tropes = {};
             fics.forEach(fic => {
-                const titleLower = (fic.title || "").toLowerCase();
-                const wordCount = fic.word_count || fic.wordCount || 0;
                 const primaryTags = fic.tags || fic.tropes || [];
-
-                let trope = primaryTags.length > 0 ? primaryTags[0] : 'General Archive';
-
-                // The Forgotten Gals rule
-                if (wordCount < 60000 || titleLower.includes('imagine') || titleLower.includes('imagines')) {
-                    trope = 'The Forgotten Gals';
-                }
-
+                const trope = primaryTags.length > 0 ? primaryTags[0] : 'All Time Favorites';
                 if (!tropes[trope]) tropes[trope] = [];
                 tropes[trope].push(fic);
             });
 
-            // Render each trope row (capped at top 10 sorted by readers)
             for (const trope in tropes) {
-                // Sort by readers descending
                 tropes[trope].sort((a, b) => (b.reads || 0) - (a.reads || 0));
                 const top10 = tropes[trope].slice(0, 10);
-                
-                container.appendChild(createTropeSection(trope, top10, true));
+                container.appendChild(createTropeSlider(trope, top10, true));
             }
         }
 
-        function createTropeSection(title, fics, showMoreBtn) {
+        function createTropeSlider(title, fics, showMoreBtn) {
             const section = document.createElement('section');
             section.className = 'trope-section';
             
@@ -315,38 +383,40 @@
             `;
 
             const slider = section.querySelector('.fic-slider');
-            fics.forEach(fic => {
-                const ficId = fic.id || fic.title;
-                const isStarred = starredFics.includes(ficId);
-                const card = document.createElement('div');
-                card.className = 'fic-card';
-                card.innerHTML = `
-                    <div>
-                        ${fic.cover_image ? `<img src="${fic.cover_image}" class="fic-cover" alt="Cover">` : ''}
-                        <div class="card-header">
-                            <h3 class="fic-title">${fic.title}</h3>
-                            <span class="star-icon ${isStarred ? 'starred' : ''}" onclick="toggleStar('${ficId}')">★</span>
-                        </div>
-                        <div class="fic-author">${fic.author || 'Unknown Author'}</div>
-                        <div class="fic-summary">${fic.summary || 'No summary available.'}</div>
-                        <div class="tags-container">
-                            ${(fic.tags || fic.tropes || []).map(t => `<span class="tag">${t}</span>`).join('')}
-                        </div>
-                    </div>
-                    <div>
-                        <div class="fic-stats">
-                            <span>👥 ${(fic.reads || 0).toLocaleString()}</span>
-                            <span>📖 ${(fic.word_count || fic.wordCount || 0).toLocaleString()}w</span>
-                        </div>
-                        <div class="button-row">
-                            <a href="epub/${fic.filename || fic.epubFile}" class="action-btn download-btn" download>Download</a>
-                            <button class="action-btn read-btn" onclick="openReader('epub/${fic.filename || fic.epubFile}', '${fic.title.replace(/'/g, "\\'")}')">Read Web</button>
-                        </div>
-                    </div>
-                `;
-                slider.appendChild(card);
-            });
+            fics.forEach(fic => slider.appendChild(createCard(fic)));
             return section;
+        }
+
+        function createCard(fic) {
+            const ficId = fic.id || fic.title;
+            const isStarred = starredFics.includes(ficId);
+            const card = document.createElement('div');
+            card.className = 'fic-card';
+            card.innerHTML = `
+                <div>
+                    ${fic.cover_image ? `<img src="${fic.cover_image}" class="fic-cover" alt="Cover">` : ''}
+                    <div class="card-header">
+                        <h3 class="fic-title">${fic.title}</h3>
+                        <span class="star-icon ${isStarred ? 'starred' : ''}" onclick="toggleStar('${ficId}')">★</span>
+                    </div>
+                    <div class="fic-author">${fic.author || 'Unknown Author'}</div>
+                    <div class="fic-summary">${fic.summary || 'No summary available.'}</div>
+                    <div class="tags-container">
+                        ${(fic.tags || fic.tropes || []).map(t => `<span class="tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+                <div>
+                    <div class="fic-stats">
+                        <span>👥 ${(fic.reads || 0).toLocaleString()}</span>
+                        <span>📖 ${(fic.word_count || fic.wordCount || 0).toLocaleString()}w</span>
+                    </div>
+                    <div class="button-row">
+                        <a href="epub/${fic.filename || fic.epubFile}" class="action-btn download-btn" download>Download</a>
+                        <button class="action-btn read-btn" onclick="openReader('epub/${fic.filename || fic.epubFile}', '${fic.title.replace(/'/g, "\\'")}')">Read Web</button>
+                    </div>
+                </div>
+            `;
+            return card;
         }
 
         function toggleStar(ficId) {
@@ -362,26 +432,6 @@
         function filterByTag(tag) {
             document.getElementById('tagFilter').value = tag;
             applyFilters();
-        }
-
-        function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const selectedTag = document.getElementById('tagFilter').value;
-            const sortBy = document.getElementById('sortSelect').value;
-
-            let filtered = allFics.filter(fic => {
-                const matchQuery = (fic.title + fic.author + (fic.tags || []).join(' ')).toLowerCase().includes(query);
-                const matchTag = !selectedTag || (fic.tags || fic.tropes || []).includes(selectedTag);
-                return matchQuery && matchTag;
-            });
-
-            if (sortBy === 'reads') {
-                filtered.sort((a, b) => (b.reads || 0) - (a.reads || 0));
-            } else if (sortBy === 'words') {
-                filtered.sort((a, b) => (b.word_count || b.wordCount || 0) - (a.word_count || a.wordCount || 0));
-            }
-
-            renderArchive(filtered);
         }
 
         document.getElementById('searchInput').addEventListener('input', applyFilters);
