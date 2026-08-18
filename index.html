@@ -46,6 +46,85 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
+        /* --- LOGIN OVERLAY STYLES --- */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(rgba(192, 132, 252, 0.15), rgba(255,255,255,0) 2px, transparent 2px);
+            background-size: 40px 40px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 18px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-box h2 {
+            font-family: var(--font-cursive);
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            background: linear-gradient(to right, #c084fc, #e9d5ff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.3));
+        }
+
+        .login-box p {
+            color: var(--muted-text);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .login-box input[type="password"] {
+            width: 80%;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            border-radius: 30px;
+            color: var(--text-color);
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .login-box button {
+            background: linear-gradient(135deg, #a855f7, #c084fc);
+            color: #0f0c1b;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-box button:hover {
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        #login-error {
+            color: #ff4d4d;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            display: none;
+        }
+
         header { text-align: center; padding: 30px 20px 10px; position: relative; }
 
         h1 {
@@ -221,50 +300,98 @@
 </head>
 <body>
 
+    <!-- Stars are kept outside so they show on the login screen too! -->
     <div class="star-decoration" style="top: 10%; left: 5%;">✦</div>
     <div class="star-decoration" style="top: 20%; right: 8%;">✨</div>
     <div class="star-decoration" style="top: 70%; left: 3%;">✦</div>
     <div class="star-decoration" style="top: 85%; right: 5%;">✨</div>
 
-    <header>
-        <h1>Fanfiction Archive</h1>
-        <div class="subtitle">By Emily for Emily (and friends)</div>
-        
-        <div class="nav-tabs">
-            <button class="tab-btn active" id="tabHome" onclick="switchTab('home')">Main Archive</button>
-            <button class="tab-btn" id="tabForgotten" onclick="switchTab('forgotten')">The Forgotten Gals ✨</button>
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Welcome</h2>
+            <p>Please enter the password to access the archive.</p>
+            <input type="password" id="passwordInput" placeholder="Enter password...">
+            <button onclick="checkPassword()">Unlock Archive</button>
+            <div id="login-error">Incorrect password. Please try again.</div>
         </div>
-    </header>
-
-    <div class="controls-container">
-        <input type="text" id="searchInput" placeholder="Search title, author, or tag...">
-        <select id="tagFilter">
-            <option value="">All Tags / Tropes</option>
-        </select>
-        <select id="sortSelect">
-            <option value="reads">Sort by: Readers</option>
-            <option value="words">Sort by: Word Count</option>
-        </select>
     </div>
 
-    <main id="archiveContainer">
-        <div style="text-align: center; color: var(--muted-text); padding: 40px;" id="loadingStatus">Loading your library...</div>
-    </main>
-
-    <!-- READER MODAL -->
-    <div id="reader-modal">
-        <div class="modal-header">
-            <div class="modal-title" id="modal-fic-title">Reading Book</div>
-            <div class="modal-controls">
-                <button class="modal-btn" id="prev-page">← Prev</button>
-                <button class="modal-btn" id="next-page">Next →</button>
-                <button class="close-modal" id="closeReader">×</button>
+    <!-- MAIN ARCHIVE CONTENT (Hidden until unlocked) -->
+    <div id="main-content" style="display: none;">
+        <header>
+            <h1>Fanfiction Archive</h1>
+            <div class="subtitle">By Emily for Emily (and friends)</div>
+            
+            <div class="nav-tabs">
+                <button class="tab-btn active" id="tabHome" onclick="switchTab('home')">Main Archive</button>
+                <button class="tab-btn" id="tabForgotten" onclick="switchTab('forgotten')">The Forgotten Gals ✨</button>
             </div>
+        </header>
+
+        <div class="controls-container">
+            <input type="text" id="searchInput" placeholder="Search title, author, or tag...">
+            <select id="tagFilter">
+                <option value="">All Tags / Tropes</option>
+            </select>
+            <select id="sortSelect">
+                <option value="reads">Sort by: Readers</option>
+                <option value="words">Sort by: Word Count</option>
+            </select>
         </div>
-        <div id="viewer"></div>
+
+        <main id="archiveContainer">
+            <div style="text-align: center; color: var(--muted-text); padding: 40px;" id="loadingStatus">Loading your library...</div>
+        </main>
+
+        <!-- READER MODAL -->
+        <div id="reader-modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-fic-title">Reading Book</div>
+                <div class="modal-controls">
+                    <button class="modal-btn" id="prev-page">← Prev</button>
+                    <button class="modal-btn" id="next-page">Next →</button>
+                    <button class="close-modal" id="closeReader">×</button>
+                </div>
+            </div>
+            <div id="viewer"></div>
+        </div>
     </div>
 
     <script>
+        // --- PASSWORD PROTECTION LOGIC ---
+        // Change "friends" to whatever you want the password to be!
+        const ARCHIVE_PASSWORD = "friends"; 
+
+        // Check if already logged in during this session
+        if (sessionStorage.getItem('archiveUnlocked') === 'true') {
+            unlockArchive();
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === ARCHIVE_PASSWORD) {
+                sessionStorage.setItem('archiveUnlocked', 'true');
+                unlockArchive();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        function unlockArchive() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        }
+
+        // Allow pressing "Enter" on the keyboard to submit the password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+
+        // --- ORIGINAL ARCHIVE LOGIC ---
         let allFics = [];
         let starredFics = JSON.parse(localStorage.getItem('starredFics') || '[]');
         let currentTab = 'home';
