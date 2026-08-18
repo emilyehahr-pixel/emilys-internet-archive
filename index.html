@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fanfiction Archive</title>
-    <!-- Importing a gorgeous high-end girly cursive font -->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 1. EPUB.JS LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
     <style>
         :root {
             --bg-color: #0f0c1b;
@@ -13,8 +14,10 @@
             --text-color: #f3e8ff;
             --muted-text: #c4b5fd;
             --card-bg: rgba(35, 27, 58, 0.85);
-            --accent-color: #ec4899;
-            --accent-glow: rgba(236, 72, 153, 0.4);
+            /* NEW GIRLY-PURPLE ACCENT PALETTE */
+            --accent-color: #c084fc; 
+            --accent-hover: #e9d5ff;
+            --accent-glow: rgba(192, 132, 252, 0.4);
             --star-color: #fbbf24;
             --font-main: 'Inter', sans-serif;
             --font-cursive: 'Pacifico', cursive;
@@ -22,19 +25,17 @@
 
         body {
             font-family: var(--font-main);
-            background-color: var--bg-color;
+            background-color: var(--bg-color);
             background-image: 
-                radial-gradient(white, rgba(255,255,255,0.15) 1px, transparent 1px),
-                radial-gradient(rgba(236, 72, 153, 0.2), rgba(255,255,255,0) 2px, transparent 2px);
-            background-size: 55px 55px, 40px 40px;
-            background-position: 0 0, 20px 20px;
+                radial-gradient(rgba(192, 132, 252, 0.15), rgba(255,255,255,0) 2px, transparent 2px);
+            background-size: 40px 40px;
             color: var(--text-color);
             margin: 0;
             padding: 20px;
             overflow-x: hidden;
+            height: 100vh;
         }
 
-        /* 2008 Retro Sparkle Stars */
         .star-decoration {
             position: fixed;
             color: var(--star-color);
@@ -49,48 +50,42 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        header {
-            text-align: center;
-            padding: 40px 20px 20px;
-            position: relative;
-        }
+        header { text-align: center; padding: 40px 20px 20px; position: relative; }
 
+        /* UPDATED TITLE GRADIENT TO LEAN PURPLE */
         h1 {
             font-family: var(--font-cursive);
-            font-size: 3.5rem;
-            color: #f472b6;
+            font-size: 4rem;
             margin: 0;
-            text-shadow: 0 0 20px rgba(244, 114, 182, 0.6), 0 0 40px rgba(168, 85, 247, 0.4);
-            letter-spacing: 1px;
+            background: linear-gradient(to right, #c084fc, #e9d5ff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 15px rgba(192, 132, 252, 0.5));
         }
 
         .subtitle {
             color: var(--muted-text);
             font-size: 0.95rem;
-            margin-top: 5px;
+            margin-top: 10px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            font-weight: 600;
         }
 
-        /* Search & Filters */
         .controls-container {
-            max-width: 800px;
-            margin: 20px auto 40px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+            max-width: 800px; margin: 40px auto;
+            display: flex; justify-content: center;
         }
 
         input[type="text"] {
-            width: 100%;
-            max-width: 450px;
-            padding: 12px 20px;
+            width: 100%; max-width: 500px;
+            padding: 15px 25px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(236, 72, 153, 0.3);
-            border-radius: 30px;
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            border-radius: 50px;
             color: var(--text-color);
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
@@ -98,147 +93,173 @@
 
         input[type="text"]:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--accent-glow);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        /* Netflix-style Row Sliders */
         .trope-section {
-            margin-bottom: 45px;
-            max-width: 1300px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 20px;
+            margin-bottom: 60px; max-width: 1400px;
+            margin-left: auto; margin-right: auto;
         }
 
         .trope-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #fbcfe8;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--accent-color);
-            padding-left: 12px;
-            letter-spacing: 0.5px;
+            font-size: 1.6rem; font-weight: 700;
+            color: #e9d5ff;
+            margin-bottom: 25px; padding-left: 20px;
+            border-left: 5px solid var(--accent-color);
         }
 
         .fic-slider {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding-bottom: 15px;
+            display: flex; gap: 30px; overflow-x: auto;
+            padding: 10px 20px 30px 20px;
             scroll-behavior: smooth;
         }
 
-        .fic-slider::-webkit-scrollbar {
-            height: 8px;
-        }
-        .fic-slider::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 4px;
-        }
-        .fic-slider::-webkit-scrollbar-thumb {
-            background: rgba(236, 72, 153, 0.3);
-            border-radius: 4px;
-        }
+        .fic-slider::-webkit-scrollbar { height: 10px; }
+        .fic-slider::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+        .fic-slider::-webkit-scrollbar-thumb { background: rgba(192, 132, 252, 0.3); border-radius: 10px; }
 
-        /* Card Design */
         .fic-card {
-            flex: 0 0 300px;
+            flex: 0 0 350px; height: 480px;
             background: var(--card-bg);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            backdrop-filter: blur(8px);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            border: 1px solid rgba(192, 132, 252, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex; flex-direction: column;
             justify-content: space-between;
-            position: relative;
+            transition: all 0.4s ease;
         }
 
         .fic-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
             border-color: var(--accent-color);
-            box-shadow: 0 12px 40px var(--accent-glow);
+            box-shadow: 0 20px 50px var(--accent-glow);
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .fic-title { font-size: 1.4rem; font-weight: 700; color: #ffffff; margin: 0 0 5px 0; }
+        .fic-author { font-size: 1rem; color: var(--muted-text); font-style: italic; margin-bottom: 15px; }
 
-        .fic-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #ffffff;
-            margin: 0 0 5px 0;
-        }
-
-        .fic-author {
-            font-size: 0.850rem;
+        /* NEW SUMMARY SECTION STYLE */
+        .fic-summary {
+            font-size: 0.9rem; line-height: 1.6;
             color: var(--muted-text);
-            font-style: italic;
-            margin-bottom: 12px;
-        }
-
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
             margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 6; /* Limit to 6 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
         .tag {
-            font-size: 0.7rem;
-            background: rgba(236, 72, 153, 0.15);
-            color: #fbcfe8;
-            padding: 3px 9px;
+            font-size: 0.75rem;
+            background: rgba(192, 132, 252, 0.1);
+            color: var(--accent-hover);
+            padding: 5px 12px;
             border-radius: 20px;
-            border: 1px solid rgba(236, 72, 153, 0.3);
+            border: 1px solid rgba(192, 132, 252, 0.2);
         }
 
         .fic-stats {
-            font-size: 0.75rem;
-            color: #9ca3af;
-            display: flex;
-            justify-content: space-between;
+            font-size: 0.85rem; color: #9ca3af;
+            display: flex; justify-content: space-between;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 10px;
-            margin-bottom: 12px;
+            padding-top: 15px; margin-bottom: 15px;
         }
 
+        /* NEW BUTTON ROW */
+        .button-row {
+            display: flex; gap: 15px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            flex: 1;
+            border: none; padding: 12px 15px;
+            border-radius: 10px; font-weight: 600;
+            font-size: 0.9rem; cursor: pointer;
+            text-align: center; text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        /* Download Button (Secondary style - Purple-muted) */
         .download-btn {
-            background: linear-gradient(135deg, #db2777, #9333ea);
-            color: white;
-            border: none;
-            padding: 9px 15px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: opacity 0.2s ease;
-            box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--text-color);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+        .download-btn:hover { background: rgba(168, 85, 247, 0.4); }
+
+        /* Read in Browser Button (Primary style - Accent Purple) */
+        .read-btn {
+            background: linear-gradient(135deg, #a855f7, #c084fc);
+            color: #0f0c1b;
+            box-shadow: 0 4px 10px rgba(192, 132, 252, 0.3);
+        }
+        .read-btn:hover { background: linear-gradient(135deg, #c084fc, #e9d5ff); }
+
+        /* 3. READER MODAL STYLES (HIDDEN BY DEFAULT) */
+        #reader-modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 12, 27, 0.95);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            flex-direction: column;
         }
 
-        .download-btn:hover {
-            opacity: 0.9;
+        #reader-modal.active { display: flex; }
+
+        .modal-header {
+            padding: 15px 30px;
+            background: rgba(35, 27, 58, 0.95);
+            display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid rgba(192, 132, 252, 0.2);
         }
+
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: #ffffff; }
+
+        .modal-controls { display: flex; gap: 15px; align-items: center; }
+
+        .modal-btn {
+            background: rgba(255, 255, 255, 0.1); color: white;
+            border: none; padding: 8px 15px; border-radius: 6px;
+            cursor: pointer; font-size: 0.8rem;
+        }
+        .modal-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .close-modal {
+            font-size: 1.5rem; color: #ff4d4d; cursor: pointer;
+            background: none; border: none;
+        }
+
+        #viewer {
+            flex: 1; position: relative;
+            max-width: 900px; margin: 20px auto;
+            background: white; border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Style the iframe content (the book pages) to be dark mode too */
+        #viewer iframe {
+            width: 100% !important; height: 100% !important;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Retro 2008 Sparkle Elements -->
-    <div class="star-decoration" style="top: 8%; left: 10%;">✦</div>
-    <div class="star-decoration" style="top: 15%; right: 12%; animation-delay: 0.5s;">★</div>
-    <div class="star-decoration" style="top: 45%; left: 4%;">✨</div>
-    <div class="star-decoration" style="top: 65%; right: 6%; animation-delay: 1s;">✦</div>
+    <div class="star-decoration" style="top: 10%; left: 5%;">✦</div>
+    <div class="star-decoration" style="top: 20%; right: 8%;">✨</div>
+    <div class="star-decoration" style="top: 70%; left: 3%;">✦</div>
+    <div class="star-decoration" style="top: 85%; right: 5%;">✨</div>
 
     <header>
         <h1>Fanfiction Archive</h1>
-        <div class="subtitle">Secure High-Tech Digital Vault</div>
+        <div class="subtitle">SECURE HIGH-TECH DIGITAL VAULT</div>
     </header>
 
     <div class="controls-container">
@@ -246,95 +267,47 @@
     </div>
 
     <main id="archiveContainer">
-        <!-- Netflix Style Row: Romance & Fluff -->
+        <!-- These sections will be dynamically populated by your JSON script, 
+             but we keep this HTML here as a placeholder/structure -->
         <section class="trope-section">
-            <div class="trope-title">Romance & Fluff </div>
-            <div class="fic-slider">
-                <div class="fic-card">
-                    <div>
-                        <div class="card-header">
-                            <h3 class="fic-title">The Lavender Sky</h3>
-                            <span>★</span>
-                        </div>
-                        <div class="fic-author">StarGazer77</div>
-                        <div class="tags-container">
-                            <span class="tag">Romance</span>
-                            <span class="tag">Fluff</span>
-                            <span class="tag">Slow Burn</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="fic-stats">
-                            <span>Reads: 125,000</span>
-                            <span>6.5h read</span>
-                        </div>
-                        <a href="epub/the-lavender-sky.epub" class="download-btn" download>Download EPUB</a>
-                    </div>
-                </div>
-
-                <div class="fic-card">
-                    <div>
-                        <div class="card-header">
-                            <h3 class="fic-title">Echoes of Yesterday</h3>
-                            <span>★</span>
-                        </div>
-                        <div class="fic-author">StarGazer77</div>
-                        <div class="tags-container">
-                            <span class="tag">Romance</span>
-                            <span class="tag">Time Travel</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="fic-stats">
-                            <span>Reads: 210,000</span>
-                            <span>7.5h read</span>
-                        </div>
-                        <a href="epub/echoes-of-yesterday.epub" class="download-btn" download>Download EPUB</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Netflix Style Row: Angst & Mystery -->
-        <section class="trope-section">
-            <div class="trope-title">Angst & Mystery</div>
-            <div class="fic-slider">
-                <div class="fic-card">
-                    <div>
-                        <div class="card-header">
-                            <h3 class="fic-title">Midnight Whispers</h3>
-                            <span>★</span>
-                        </div>
-                        <div class="fic-author">MoonlightWriter</div>
-                        <div class="tags-container">
-                            <span class="tag">Angst</span>
-                            <span class="tag">Mystery</span>
-                            <span class="tag">Hurt/Comfort</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="fic-stats">
-                            <span>Reads: 98,000</span>
-                            <span>4.5h read</span>
-                        </div>
-                        <a href="epub/midnight-whispers.epub" class="download-btn" download>Download EPUB</a>
-                    </div>
-                </div>
+            <div class="trope-title">Loading Library...</div>
+            <div class="fic-slider" id="romance-row">
+                <!-- Cards will appear here -->
             </div>
         </section>
     </main>
 
+    <!-- 4. READER MODAL HTML (The hidden popup) -->
+    <div id="reader-modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-fic-title">Reading: Title</div>
+            <div class="modal-controls">
+                <button class="modal-btn" id="prev-chapter">← Prev</button>
+                <button class="modal-btn" id="next-chapter">Next →</button>
+                <button class="close-modal" id="closeReader">×</button>
+            </div>
+        </div>
+        <div id="viewer">
+            <!-- epub.js renders the book here -->
+        </div>
+    </div>
+
     <script>
-        // Simple search filter prototype
+        // --- SEARCH FUNCTIONALITY ---
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.fic-card');
-            cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                card.style.display = text.includes(query) ? 'flex' : 'none';
-            });
-        });
-    </script>
-</body>
-</html>
+            const sections = document.querySelectorAll('.trope-section');
+            sections.forEach(section => {
+                let hasVisibleCard = false;
+                const cards = section.querySelectorAll('.fic-card');
+                cards.forEach(card => {
+                    const text = card.innerText.toLowerCase();
+                    if (text.includes(query)) {
+                        card.style.display = 'flex';
+                        hasVisibleCard = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                section.style.display =
