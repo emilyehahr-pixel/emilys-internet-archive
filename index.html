@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fanfiction Archive</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- 1. EPUB.JS LIBRARY -->
+    <!-- EPUB.JS LIBRARY -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
     <style>
         :root {
@@ -14,7 +14,6 @@
             --text-color: #f3e8ff;
             --muted-text: #c4b5fd;
             --card-bg: rgba(35, 27, 58, 0.85);
-            /* NEW GIRLY-PURPLE ACCENT PALETTE */
             --accent-color: #c084fc; 
             --accent-hover: #e9d5ff;
             --accent-glow: rgba(192, 132, 252, 0.4);
@@ -33,7 +32,6 @@
             margin: 0;
             padding: 20px;
             overflow-x: hidden;
-            height: 100vh;
         }
 
         .star-decoration {
@@ -52,7 +50,6 @@
 
         header { text-align: center; padding: 40px 20px 20px; position: relative; }
 
-        /* UPDATED TITLE GRADIENT TO LEAN PURPLE */
         h1 {
             font-family: var(--font-cursive);
             font-size: 4rem;
@@ -99,6 +96,7 @@
         .trope-section {
             margin-bottom: 60px; max-width: 1400px;
             margin-left: auto; margin-right: auto;
+            padding: 0 20px;
         }
 
         .trope-title {
@@ -110,7 +108,7 @@
 
         .fic-slider {
             display: flex; gap: 30px; overflow-x: auto;
-            padding: 10px 20px 30px 20px;
+            padding: 10px 5px 30px 5px;
             scroll-behavior: smooth;
         }
 
@@ -119,11 +117,11 @@
         .fic-slider::-webkit-scrollbar-thumb { background: rgba(192, 132, 252, 0.3); border-radius: 10px; }
 
         .fic-card {
-            flex: 0 0 350px; height: 480px;
+            flex: 0 0 320px;
             background: var(--card-bg);
             border: 1px solid rgba(192, 132, 252, 0.1);
             border-radius: 20px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             display: flex; flex-direction: column;
@@ -137,55 +135,57 @@
             box-shadow: 0 20px 50px var(--accent-glow);
         }
 
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .fic-title { font-size: 1.4rem; font-weight: 700; color: #ffffff; margin: 0 0 5px 0; }
-        .fic-author { font-size: 1rem; color: var(--muted-text); font-style: italic; margin-bottom: 15px; }
+        .fic-cover {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(192, 132, 252, 0.2);
+        }
 
-        /* NEW SUMMARY SECTION STYLE */
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .fic-title { font-size: 1.25rem; font-weight: 700; color: #ffffff; margin: 0 0 5px 0; }
+        .fic-author { font-size: 0.9rem; color: var(--muted-text); font-style: italic; margin-bottom: 10px; }
+
         .fic-summary {
-            font-size: 0.9rem; line-height: 1.6;
+            font-size: 0.85rem; line-height: 1.5;
             color: var(--muted-text);
             margin-bottom: 15px;
             display: -webkit-box;
-            -webkit-line-clamp: 6; /* Limit to 6 lines */
+            -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
         .tag {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             background: rgba(192, 132, 252, 0.1);
             color: var(--accent-hover);
-            padding: 5px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
             border: 1px solid rgba(192, 132, 252, 0.2);
         }
 
         .fic-stats {
-            font-size: 0.85rem; color: #9ca3af;
+            font-size: 0.8rem; color: #9ca3af;
             display: flex; justify-content: space-between;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 15px; margin-bottom: 15px;
+            padding-top: 12px; margin-bottom: 15px;
         }
 
-        /* NEW BUTTON ROW */
-        .button-row {
-            display: flex; gap: 15px;
-            justify-content: center;
-        }
+        .button-row { display: flex; gap: 10px; }
 
         .action-btn {
-            flex: 1;
-            border: none; padding: 12px 15px;
-            border-radius: 10px; font-weight: 600;
-            font-size: 0.9rem; cursor: pointer;
+            flex: 1; border: none; padding: 10px;
+            border-radius: 8px; font-weight: 600;
+            font-size: 0.8rem; cursor: pointer;
             text-align: center; text-decoration: none;
             transition: all 0.2s ease;
         }
 
-        /* Download Button (Secondary style - Purple-muted) */
         .download-btn {
             background: rgba(168, 85, 247, 0.2);
             color: var(--text-color);
@@ -193,7 +193,6 @@
         }
         .download-btn:hover { background: rgba(168, 85, 247, 0.4); }
 
-        /* Read in Browser Button (Primary style - Accent Purple) */
         .read-btn {
             background: linear-gradient(135deg, #a855f7, #c084fc);
             color: #0f0c1b;
@@ -201,16 +200,14 @@
         }
         .read-btn:hover { background: linear-gradient(135deg, #c084fc, #e9d5ff); }
 
-        /* 3. READER MODAL STYLES (HIDDEN BY DEFAULT) */
+        /* READER MODAL */
         #reader-modal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(15, 12, 27, 0.95);
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            z-index: 1000; backdrop-filter: blur(10px);
             flex-direction: column;
         }
-
         #reader-modal.active { display: flex; }
 
         .modal-header {
@@ -219,35 +216,16 @@
             display: flex; justify-content: space-between;
             align-items: center; border-bottom: 1px solid rgba(192, 132, 252, 0.2);
         }
-
-        .modal-title { font-size: 1.2rem; font-weight: 700; color: #ffffff; }
-
+        .modal-title { font-size: 1.1rem; font-weight: 700; color: #ffffff; }
         .modal-controls { display: flex; gap: 15px; align-items: center; }
-
         .modal-btn {
             background: rgba(255, 255, 255, 0.1); color: white;
             border: none; padding: 8px 15px; border-radius: 6px;
             cursor: pointer; font-size: 0.8rem;
         }
         .modal-btn:hover { background: rgba(255, 255, 255, 0.2); }
-
-        .close-modal {
-            font-size: 1.5rem; color: #ff4d4d; cursor: pointer;
-            background: none; border: none;
-        }
-
-        #viewer {
-            flex: 1; position: relative;
-            max-width: 900px; margin: 20px auto;
-            background: white; border-radius: 10px;
-            overflow: hidden;
-        }
-
-        /* Style the iframe content (the book pages) to be dark mode too */
-        #viewer iframe {
-            width: 100% !important; height: 100% !important;
-        }
-
+        .close-modal { font-size: 1.5rem; color: #ff4d4d; cursor: pointer; background: none; border: none; }
+        #viewer { flex: 1; position: relative; max-width: 900px; width: 100%; margin: 20px auto; background: white; border-radius: 10px; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -259,7 +237,7 @@
 
     <header>
         <h1>Fanfiction Archive</h1>
-        <div class="subtitle">SECURE HIGH-TECH DIGITAL VAULT</div>
+        <div class="subtitle">By Emily for Emily (and friends)</div>
     </header>
 
     <div class="controls-container">
@@ -267,47 +245,129 @@
     </div>
 
     <main id="archiveContainer">
-        <!-- These sections will be dynamically populated by your JSON script, 
-             but we keep this HTML here as a placeholder/structure -->
-        <section class="trope-section">
-            <div class="trope-title">Loading Library...</div>
-            <div class="fic-slider" id="romance-row">
-                <!-- Cards will appear here -->
-            </div>
-        </section>
+        <div style="text-align: center; color: var(--muted-text); padding: 40px;" id="loadingStatus">Loading your library from metadata.json...</div>
     </main>
 
-    <!-- 4. READER MODAL HTML (The hidden popup) -->
+    <!-- READER MODAL -->
     <div id="reader-modal">
         <div class="modal-header">
-            <div class="modal-title" id="modal-fic-title">Reading: Title</div>
+            <div class="modal-title" id="modal-fic-title">Reading Book</div>
             <div class="modal-controls">
-                <button class="modal-btn" id="prev-chapter">← Prev</button>
-                <button class="modal-btn" id="next-chapter">Next →</button>
+                <button class="modal-btn" id="prev-page">← Prev</button>
+                <button class="modal-btn" id="next-page">Next →</button>
                 <button class="close-modal" id="closeReader">×</button>
             </div>
         </div>
-        <div id="viewer">
-            <!-- epub.js renders the book here -->
-        </div>
+        <div id="viewer"></div>
     </div>
 
     <script>
-        // --- SEARCH FUNCTIONALITY ---
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const sections = document.querySelectorAll('.trope-section');
-            sections.forEach(section => {
-                let hasVisibleCard = false;
-                const cards = section.querySelectorAll('.fic-card');
-                cards.forEach(card => {
-                    const text = card.innerText.toLowerCase();
-                    if (text.includes(query)) {
-                        card.style.display = 'flex';
-                        hasVisibleCard = true;
-                    } else {
-                        card.style.display = 'none';
-                    }
+        let bookInstance = null;
+        let renditionInstance = null;
+
+        // Fetch metadata.json generated by Python script
+        fetch('metadata.json')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loadingStatus').style.display = 'none';
+                buildArchive(data);
+            })
+            .catch(err => {
+                document.getElementById('loadingStatus').innerText = "Could not load metadata.json yet. Make sure your Python script generated and pushed it!";
+            });
+
+        function buildArchive(fics) {
+            const container = document.getElementById('archiveContainer');
+            container.innerHTML = '';
+
+            // Group by primary trope or default to "General Archive"
+            const tropes = {};
+            fics.forEach(fic => {
+                const trope = (fic.tropes && fic.tropes.length > 0) ? fic.tropes[0] : 'All Time Favorites';
+                if (!tropes[trope]) tropes[trope] = [];
+                tropes[trope].push(fic);
+            });
+
+            // Sort fics inside each trope by word count / reads (longest first)
+            for (const trope in tropes) {
+                tropes[trope].sort((a, b) => b.word_count - a.word_count);
+
+                // Create Section
+                const section = document.createElement('section');
+                section.className = 'trope-section';
+                section.innerHTML = `
+                    <div class="trope-title">${trope}</div>
+                    <div class="fic-slider" id="slider-${trope.replace(/\s+/g, '-')}"></div>
+                `;
+                container.appendChild(section);
+
+                const slider = section.querySelector('.fic-slider');
+                tropes[trope].forEach(fic => {
+                    const card = document.createElement('div');
+                    card.className = 'fic-card';
+                    card.innerHTML = `
+                        <div>
+                            ${fic.cover_image ? `<img src="${fic.cover_image}" class="fic-cover" alt="Cover">` : ''}
+                            <div class="card-header">
+                                <h3 class="fic-title">${fic.title}</h3>
+                                <span>★</span>
+                            </div>
+                            <div class="fic-author">${fic.author}</div>
+                            <div class="fic-summary">${fic.summary || 'No summary available.'}</div>
+                            <div class="tags-container">
+                                ${(fic.tropes || []).map(t => `<span class="tag">${t}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="fic-stats">
+                                <span>${(fic.word_count || 0).toLocaleString()} words</span>
+                                <span>Est. ${( (fic.word_count || 0) / 9000 ).toFixed(1)}h</span>
+                            </div>
+                            <div class="button-row">
+                                <a href="epub/${fic.filename}" class="action-btn download-btn" download>Download</a>
+                                <button class="action-btn read-btn" onclick="openReader('epub/${fic.filename}', '${fic.title.replace(/'/g, "\\'")}')">Read Web</button>
+                            </div>
+                        </div>
+                    `;
+                    slider.appendChild(card);
                 });
-                section.style.display =
+            }
+        }
+
+        // Search Filter
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.fic-card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(query) ? 'flex' : 'none';
+            });
+        });
+
+        // EPUB Reader Logic
+        function openReader(epubPath, title) {
+            document.getElementById('modal-fic-title').innerText = "Reading: " + title;
+            document.getElementById('reader-modal').classList.add('active');
+            document.getElementById('viewer').innerHTML = '';
+
+            bookInstance = ePub(epubPath);
+            renditionInstance = bookInstance.renderTo("viewer", {
+                width: "100%",
+                height: "100%"
+            });
+            renditionInstance.display();
+        }
+
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (renditionInstance) renditionInstance.prev();
+        });
+
+        document.getElementById('next-page').addEventListener('click', () => {
+            if (renditionInstance) renditionInstance.next();
+        });
+
+        document.getElementById('closeReader').addEventListener('click', () => {
+            document.getElementById('reader-modal').classList.remove('active');
+            if (bookInstance) bookInstance.destroy();
+        });
+    </script>
+</body>
+</html>
